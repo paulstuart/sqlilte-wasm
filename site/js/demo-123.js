@@ -12,6 +12,7 @@
 
   A basic demonstration of the SQLite3 "OO#1" API.
 */
+
 'use strict';
 (function(){
   /**
@@ -287,4 +288,33 @@
       error("Exception:",e.message);
     }
   });
+
+  console.log("try adding a div")
+  const moar = document.createElement('div');
+  moar.innerHTML = "hey now";
+  moar.style.backgroundColor = 'pink';
+
+document.body.appendChild(moar);
+console.log("added a div")
+
+  const byteArray = sqlite3.capi.sqlite3_js_db_export(myDb);
+//Then we need a good deal more code to export that byte array out of the browser. Here's one approach:
+
+const blob = new Blob([byteArray.buffer],
+                      {type:"application/x-sqlite3"});
+// const a = document.createElement('a');
+// document.body.appendChild(a);
+const a = document.getElementById("download_db")
+a.href = window.URL.createObjectURL(blob);
+a.download = (myDb.filename.split('/').pop() || "my.sqlite3");
+a.addEventListener('click',function(){
+  setTimeout(function(){
+    console.log("Exported (possibly auto-downloaded) database");
+    window.URL.revokeObjectURL(a.href);
+    a.remove();
+  },500);
+});
+// a.click();
+
+
 })();
